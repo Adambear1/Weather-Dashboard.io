@@ -1,6 +1,24 @@
 /* BODY */
+.auto-fit, #locationGif{
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0px;
+    padding: 0px;
+    position: relative;
+    z-index: 0 !important;
+}
+
+.photo-description-text {
+    float: center;
+    bottom: 1px !important;
+    font-size: 4px;
+    position: absolute;
+    z-index: 1 !important;
+}
+
+
 .container{
-    padding-bottom: 20px;
+    padding-bottom: 10px;
 }
 
 .background{
@@ -16,6 +34,16 @@
     overflow: hidden;
 }
 
+.form-control{
+    width: 80%;
+}
+
+.btn-primary{
+    float: right;
+    margin-top: -35px;
+    margin-right: 70px;
+}
+
 .display-4{
     color:rgb(39, 38, 38) !important;
     text-shadow: 2px 2px rgb(119, 157, 255);
@@ -25,6 +53,14 @@
 .display-4:hover{
     color:rgb(39, 38, 38) !important;
     opacity: 85% !important;
+}
+
+.card-body{
+    color: black;
+    opacity: 75%;
+    font-size: 10px;
+    text-align: center;
+    text-shadow: 1px 1px grey;
 }
 
 /* POPUP MODAL */

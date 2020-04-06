@@ -44,11 +44,16 @@ $('#btn-submit').on('click', function() {
             var kelvin = list[i].main.temp;
             var temperature = Math.floor((kelvin - 273.15) * 9/5 + 32)
             var weatherIcon = 'http://openweathermap.org/img/wn/' + list[i].weather[0].icon  + '@2x.png'
+            var humidity = list[i].main.humidity;
+            var sealevel = list[i].main.sea_level
+            var windspeed = list[i].wind.speed
+            console.log(list[i])
             for(var j = 1; j < 6; j++){
                 var cardImg = document.querySelector('#card-'+[j]+'-img')
                 var cardText = document.querySelector('#card-'+[j]+'-text')
                 var cardTemp = document.querySelector('#card-'+[j]+'-temperature')
                 var cityHeader = document.querySelector('#city-display')
+
                 console.log(cardTemp)
                 console.log(temperature)
                 cardImg.src = weatherIcon;
@@ -56,12 +61,31 @@ $('#btn-submit').on('click', function() {
                 cardText.textContent = forecast;
             }
         }
-        //City Summary -- Right Column (WIKIPEDIA API)
-        cityHeader.textContent += "   " + cityName
-        var url = 'https://en.wikipedia.org/w/api.php' 
+        //City Summary -- Center Column (MOMENT.JS / WIKIPEDIA API)
+        // $('.list-group-item').empty();
+
+        var today = moment().format("dddd, MMMM Do YYYY hh:mm:ss");
+        var hour = parseInt(moment().format('HH'))
+        
+        console.log(hour)
+        if(hour > 11.5){
+            x = "PM"
+        } else {
+            x = "AM"
+        }
+        console.log(x)
+        cityHeader.textContent += "   " + cityName + ",    " + today + "    "  + x
+        $('#humidity').text('Humidity:  ' + humidity + '%')
+        $('#sealevel').text('Feet Above Sealevel:  ' + sealevel)
+        $('#windspeed').text('Windspeed (MPH):  ' + windspeed)
+
+
+        // 
+
+        var Wikiurl = 'https://en.wikipedia.org/w/api.php' 
         $.ajax({
             type: "GET",
-            url: url,
+            url: Wikiurl,
             data:{action:'openseach', format:'json',search: cityName},
             dataType:'jsonp',
             success: function (data){
@@ -72,8 +96,62 @@ $('#btn-submit').on('click', function() {
             }
         })
 
-                
-    
+        //City Gif -- Right Column (GIPHY API)
+            
+            var pic_api_key = 'l_ucLpuaVqeosGc7xD0pKg6Ib61kn737l_M3-nkFmZY'
+            
+            var Picurl = 'https://api.unsplash.com/search/photos?client_id=' + pic_api_key + '&query=' + cityName;
+            $.ajax({
+                    url: Picurl,
+                    method: "GET"
+                })
+                .then(function(response) {
+                     var random = Math.floor(Math.random() * 10)
+                     console.log(response.results[random].user.first_name);
+                     console.log(response.results[random].urls);
+                     console.log(response.results[random].urls.raw);
+                     var authorFirstName = response.results[random].user.first_name
+                     var authorLastName = response.results[random].user.last_name
+                     var returnedImg = response.results[random].urls.regular;
+                     var returnedCitation = response.results[random].links.download;
+                     var returnedDescription = response.results[random].alt_description;
+                     var cityImg = $('<img>');
+                     var citation = $('<a>')
+                     var cityDescription = $('<p>').text(returnedDescription);
+                     citation.attr('href', returnedCitation)
+                     cityImg.attr('src', returnedImg);
+                     cityImg.attr('alt', returnedCitation);
+                     cityImg.addClass('auto-fit');
+                     console.log(response.results[random].height < 6000);
+                     //For small pictures, two are returned to fill empty space; for large pictures, it autofills for only need use of one picture.
+                     //If author does not have last name presented, then only first name is shown.
+                     if (response.results[random].height < 6000){
+                         console.log(response.results[random].user)
+                         console.log(authorLastName == null)
+                         if(authorLastName == null){
+                            $('#city-picture-header').append(citation).text('Credit:   ' + authorFirstName);
+                            $('.auto-fit').append(cityDescription)
+                            $('#locationGif').append(cityImg)
+                            $('#locationGif').append($('<img>').addClass('auto-fit').attr('src',response.results[random - 1].urls.regular))
+                         } else{
+                            $('#city-picture-header').append(citation).text('Credit:   ' + authorFirstName + '    ' + authorLastName);
+                            $('.auto-fit').append(cityDescription)
+                            $('#locationGif').append(cityImg)
+                            $('#locationGif').append($('<img>').addClass('auto-fit').attr('src',response.results[random - 1].urls.regular))
+                         }
+                     } else{
+                         if(authorLastName == null){
+                            $('#city-picture-header').append(citation).text('Credit:   ' + authorFirstName);
+                            $('.auto-fit').append(cityDescription)
+                            $('#locationGif').append(cityImg)
+                         } else {
+                            $('#city-picture-header').append(citation).text('Credit:   ' + authorFirstName + '    ' + authorLastName);
+                            $('.auto-fit').append(cityDescription)
+                            $('#locationGif').append(cityImg)
+                         }
+
+                     }
+                })
 
 
 
