@@ -31,7 +31,6 @@ $('#btn-submit').on('click', function() {
     event.preventDefault()
     var apiKey = '79bb7dc0e8f07f6ebe01166410e6e392'
     var cityName = document.querySelector('#myInput').value
-    // var queryURL = 'http://api.openweathermap.org/data/2.5/weather?q=' + cityName + '&APPID=' + apiKey
     var queryURL = 'http://api.openweathermap.org/data/2.5/forecast?q=' + cityName + '&APPID=' + apiKey
     $.ajax({
         url: queryURL,
@@ -39,6 +38,7 @@ $('#btn-submit').on('click', function() {
     }).then(function(response){
         //Weather Dashboard
         var list = response.list
+        console.log(response)
         for (var i = 0; i < list.length; i += 8) {
             var forecast = list[i].weather[0].main
             var kelvin = list[i].main.temp;
@@ -48,18 +48,34 @@ $('#btn-submit').on('click', function() {
             var sealevel = list[i].main.sea_level
             var windspeed = list[i].wind.speed
             console.log(list[i])
-            for(var j = 1; j < 6; j++){
-                var cardImg = document.querySelector('#card-'+[j]+'-img')
-                var cardText = document.querySelector('#card-'+[j]+'-text')
-                var cardTemp = document.querySelector('#card-'+[j]+'-temperature')
-                var cityHeader = document.querySelector('#city-display')
+            //
+            console.log(list.length)
+            console.log(i)
 
-                console.log(cardTemp)
-                console.log(temperature)
-                cardImg.src = weatherIcon;
-                cardTemp.textContent = temperature + "°F";
-                cardText.textContent = forecast;
-            }
+            var cardImg = document.querySelector('#card-'+ i +'-img')
+            var cardText = document.querySelector('#card-'+ i +'-text')
+            var cardTemp = document.querySelector('#card-'+ i +'-temperature')
+            var cityHeader = document.querySelector('#city-display')
+            console.log(cardTemp)
+            console.log(temperature)
+            cardImg.setAttribute('src', weatherIcon);
+            cardTemp.textContent = temperature + "°F";
+            cardText.textContent = forecast;
+
+
+
+            // for(var j = 1; j < 6; j++){
+                // var cardImg = document.querySelector('#card-'+[j]+'-img')
+                // var cardText = document.querySelector('#card-'+[j]+'-text')
+                // var cardTemp = document.querySelector('#card-'+[j]+'-temperature')
+                // var cityHeader = document.querySelector('#city-display')
+
+                // console.log(cardTemp)
+                // console.log(temperature)
+                // cardImg.src = weatherIcon;
+                // cardTemp.textContent = temperature + "°F";
+                // cardText.textContent = forecast;
+            // }
         }
         //City Summary -- Center Column (MOMENT.JS / WIKIPEDIA API)
         // $('.list-group-item').empty();
@@ -74,10 +90,11 @@ $('#btn-submit').on('click', function() {
             x = "AM"
         }
         console.log(x)
-        cityHeader.textContent += "   " + cityName + ",    " + today + "    "  + x
+        cityHeader.textContent = "City:   " + cityName + ",    " + today + "    "  + x
         $('#humidity').text('Humidity:  ' + humidity + '%')
         $('#sealevel').text('Feet Above Sealevel:  ' + sealevel)
         $('#windspeed').text('Windspeed (MPH):  ' + windspeed)
+        $()
 
 
         // 
@@ -158,25 +175,25 @@ $('#btn-submit').on('click', function() {
                          console.log(response.results[random].user)
                          console.log(authorLastName == null)
                          if(authorLastName == null){
-                            $('#city-picture-header').append(citation).text('Photo(s) by:   ' + authorFirstName);
-                            $('.auto-fit').append(cityDescription)
-                            $('#locationGif').append(cityImg)
-                            $('#locationGif').append($('<img>').addClass('auto-fit').attr('src',response.results[random - 1].urls.regular))
+                            $('#city-picture-header').html(citation).text('Photo(s) by:   ' + authorFirstName);
+                            $('.auto-fit').html(cityDescription)
+                            $('#locationGif').html(cityImg)
+                            $('#locationGif').html($('<img>').addClass('auto-fit').attr('src',response.results[random - 1].urls.regular))
                          } else{
-                            $('#city-picture-header').append(citation).text('Photo(s) by:   ' + authorFirstName + '    ' + authorLastName);
-                            $('.auto-fit').append(cityDescription)
-                            $('#locationGif').append(cityImg)
-                            $('#locationGif').append($('<img>').addClass('auto-fit').attr('src',response.results[random - 1].urls.regular))
+                            $('#city-picture-header').html(citation).text('Photo(s) by:   ' + authorFirstName + '    ' + authorLastName);
+                            $('.auto-fit').html(cityDescription)
+                            $('#locationGif').html(cityImg)
+                            $('#locationGif').html($('<img>').addClass('auto-fit').attr('src',response.results[random - 1].urls.regular))
                          }
                      } else{
                          if(authorLastName == null){
-                            $('#city-picture-header').append(citation).text('Photo(s) by:   ' + authorFirstName);
-                            $('.auto-fit').append(cityDescription)
-                            $('#locationGif').append(cityImg)
+                            $('#city-picture-header').html(citation).text('Photo(s) by:   ' + authorFirstName);
+                            $('.auto-fit').html(cityDescription)
+                            $('#locationGif').html(cityImg)
                          } else {
-                            $('#city-picture-header').append(citation).text('Photo(s) by:   ' + authorFirstName + '    ' + authorLastName);
-                            $('.auto-fit').append(cityDescription)
-                            $('#locationGif').append(cityImg)
+                            $('#city-picture-header').html(citation).text('Photo(s) by:   ' + authorFirstName + '    ' + authorLastName);
+                            $('.auto-fit').html(cityDescription)
+                            $('#locationGif').html(cityImg)
                          }
 
                      }
@@ -185,8 +202,8 @@ $('#btn-submit').on('click', function() {
 
 
         //City Add -- Left Column
-        var lOne = $("<li id=" + cityName + ">").text(cityName);
-        $("#city-add-history").append(lOne);
+        var lOne = $("<li id=" + cityName + ")>").text(cityName);
+        $("#city-add-history").prepend(lOne);
 
         const citySave = [];
 
@@ -196,7 +213,23 @@ $('#btn-submit').on('click', function() {
         citySave.push(individualCity)
         localStorage.setItem('city', JSON.stringify(citySave));
     })
+
+    document.querySelector('#myInput').value = "";
 })
+
+
+$( "#city-add-history").click(function() {
+      $('#myInput').val( $(this).text().trim());
+
+    }
+)
+
+// $("#city-add-history").click(function(){
+//     var input = $(this).text();
+//     input = input.substr(0,(input.length  - 1 ));
+// })
+
+
 
 
 
