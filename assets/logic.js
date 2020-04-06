@@ -82,19 +82,48 @@ $('#btn-submit').on('click', function() {
 
         // 
 
-        var Wikiurl = 'https://en.wikipedia.org/w/api.php' 
-        $.ajax({
-            type: "GET",
-            url: Wikiurl,
-            data:{action:'openseach', format:'json',search: cityName},
-            dataType:'jsonp',
-            success: function (data){
-                data.setHeader("Set-Cookie", "HttpOnly;Secure; SameSite=Strict");
-                var arr=data;
-                console.log(arr)
+        //Create a new object to interact with the server
+        var xhr = new XMLHttpRequest();
 
+        var Wikiurl = "https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&generator=search&gsrnamespace=0&gsrlimit=5&gsrsearch=" + cityName;
+
+        // Provide 3 arguments (GET/POST, The URL, Async True/False)
+        xhr.open('GET', Wikiurl, true);
+
+        // Once request has loaded...
+        xhr.onload = function() {
+            // Parse the request into JSON
+            var data = JSON.parse(this.response);
+
+            // Log the data object
+            console.log(data);
+
+        //     // Log the page objects
+        //     console.log(data.query.pages)
+
+        //     // Loop through the data object
+        //     // Pulling out the titles of each page
+        //     for (var i in data.query.pages) {
+        //         console.log(data.query.pages[i].title);
             }
-        })
+    // }
+        // Send request to the server asynchronously
+        xhr.send();
+
+
+
+        // $.ajax({
+        //     type: "GET",
+        //     url: Wikiurl,
+        //     data:{action:'openseach', format:'json',search: cityName},
+        //     dataType:'jsonp',
+        //     success: function (data){
+        //         data.setHeader("Set-Cookie", "HttpOnly;Secure; SameSite=Strict");
+        //         var arr=data;
+        //         console.log(arr)
+
+        //     }
+        // })
 
         //City Gif -- Right Column (GIPHY API)
             
@@ -129,23 +158,23 @@ $('#btn-submit').on('click', function() {
                          console.log(response.results[random].user)
                          console.log(authorLastName == null)
                          if(authorLastName == null){
-                            $('#city-picture-header').append(citation).text('Credit:   ' + authorFirstName);
+                            $('#city-picture-header').append(citation).text('Photo(s) by:   ' + authorFirstName);
                             $('.auto-fit').append(cityDescription)
                             $('#locationGif').append(cityImg)
                             $('#locationGif').append($('<img>').addClass('auto-fit').attr('src',response.results[random - 1].urls.regular))
                          } else{
-                            $('#city-picture-header').append(citation).text('Credit:   ' + authorFirstName + '    ' + authorLastName);
+                            $('#city-picture-header').append(citation).text('Photo(s) by:   ' + authorFirstName + '    ' + authorLastName);
                             $('.auto-fit').append(cityDescription)
                             $('#locationGif').append(cityImg)
                             $('#locationGif').append($('<img>').addClass('auto-fit').attr('src',response.results[random - 1].urls.regular))
                          }
                      } else{
                          if(authorLastName == null){
-                            $('#city-picture-header').append(citation).text('Credit:   ' + authorFirstName);
+                            $('#city-picture-header').append(citation).text('Photo(s) by:   ' + authorFirstName);
                             $('.auto-fit').append(cityDescription)
                             $('#locationGif').append(cityImg)
                          } else {
-                            $('#city-picture-header').append(citation).text('Credit:   ' + authorFirstName + '    ' + authorLastName);
+                            $('#city-picture-header').append(citation).text('Photo(s) by:   ' + authorFirstName + '    ' + authorLastName);
                             $('.auto-fit').append(cityDescription)
                             $('#locationGif').append(cityImg)
                          }
