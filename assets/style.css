@@ -50,6 +50,11 @@
     opacity: 75% !important;
 }
 
+button {
+    border: none;
+    background: none;
+}
+
 .display-4:hover{
     color:rgb(39, 38, 38) !important;
     opacity: 85% !important;
@@ -58,11 +63,35 @@
 .card-body{
     color: black;
     opacity: 75%;
-    font-size: 10px;
+    font-size: 13px;
     text-align: center;
-    text-shadow: 1px 1px grey;
+    text-shadow: 1px 2px white;
+    font-weight: bold;
 }
 
+h2, .h2 {
+    font-size: 30px;
+    float: left !important;
+    margin-right: 60%;
+    text-shadow: 2px 2px lightgrey;
+    font-weight: bold;
+}
+
+.bg-modal p {
+    margin: 0 0 47px 40px;
+    text-align: left;
+    padding-right: 49px;
+}
+
+.card-img, .card-img-bottom, .card-img-top {
+    width: 75% !important;
+    
+}
+
+.card-img-top {
+    margin: auto !important;
+    margin-bottom: -30px !important;
+}
 /* POPUP MODAL */
 .hide {
     display: none;
@@ -139,6 +168,12 @@
     color: gray;
     opacity: 65%;
 }
+
+.fa-arrow-left:hover, .fa-arrow-right:hover {
+    opacity: 50%;
+}
+
+
 
 ul {
     list-style-type: none;

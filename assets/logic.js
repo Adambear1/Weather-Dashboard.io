@@ -27,6 +27,9 @@ $('.fa-window-close').on('click', function(){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////// WEATHER API /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+let weather = []
+
 $('#btn-submit').on('click', function() {
     event.preventDefault()
     var apiKey = '79bb7dc0e8f07f6ebe01166410e6e392'
@@ -38,7 +41,8 @@ $('#btn-submit').on('click', function() {
     }).then(function(response){
         //Weather Dashboard
         var list = response.list
-        console.log(response)
+        console.log(list)
+        let location_facts = {};
         for (var i = 0; i < list.length; i += 8) {
             var forecast = list[i].weather[0].main
             var kelvin = list[i].main.temp;
@@ -47,57 +51,80 @@ $('#btn-submit').on('click', function() {
             var humidity = list[i].main.humidity;
             var sealevel = list[i].main.sea_level
             var windspeed = list[i].wind.speed
-            console.log(list[i])
+            var population = response.city.population
+            var lon = response.city.coord.lon
+            var lat = response.city.coord.lat
+            let day_of_week = list[i].dt_txt;
+            day_of_week = day_of_week.substring(0, day_of_week.length - 8);
+            day_of_week = day_of_week.substring(5)
+            var DOW = day_of_week
+            console.log(DOW)
             //
             console.log(list.length)
             console.log(i)
-
+            var cardDOW = document.querySelector('#card-'+ i +'-day-of-week')
             var cardImg = document.querySelector('#card-'+ i +'-img')
             var cardText = document.querySelector('#card-'+ i +'-text')
             var cardTemp = document.querySelector('#card-'+ i +'-temperature')
             var cityHeader = document.querySelector('#city-display')
             console.log(cardTemp)
             console.log(temperature)
+            cardDOW.textContent = DOW
             cardImg.setAttribute('src', weatherIcon);
             cardTemp.textContent = temperature + "°F";
             cardText.textContent = forecast;
+            //
+
+            location_facts = {
+                Savedcity: cityName,
+                Savedtemp: temperature,
+                Savedforecast: forecast,
+                Savedhumidity: humidity,
+                Savedsealevel: sealevel,
+                Savedwindspeed: windspeed,
+                Savedpopulation:population,
+                Savedlon: lon,
+                Savedlat: lat,
+                Savedday_of_week1: list[0].dt_txt,
+                Savedday_of_week2: list[8].dt_txt,
+                Savedday_of_week3: list[16].dt_txt,
+                Savedday_of_week4: list[24].dt_txt,
+                Savedday_of_week5: list[32].dt_txt,
+                Savedimg1: 'http://openweathermap.org/img/wn/' + list[0].weather[0].icon  + '@2x.png',
+                Savedimg2: 'http://openweathermap.org/img/wn/' + list[8].weather[0].icon  + '@2x.png',
+                Savedimg3: 'http://openweathermap.org/img/wn/' + list[16].weather[0].icon  + '@2x.png',
+                Savedimg4: 'http://openweathermap.org/img/wn/' + list[24].weather[0].icon  + '@2x.png',
+                Savedimg5: 'http://openweathermap.org/img/wn/' + list[32].weather[0].icon  + '@2x.png',
+                Savedtoday: list[0].dt_txt,
+                SavedFinalToday:  list[0].dt_txt.substring(0, list[0].dt_txt.length - 8),
+          
+            }    
 
 
-
-            // for(var j = 1; j < 6; j++){
-                // var cardImg = document.querySelector('#card-'+[j]+'-img')
-                // var cardText = document.querySelector('#card-'+[j]+'-text')
-                // var cardTemp = document.querySelector('#card-'+[j]+'-temperature')
-                // var cityHeader = document.querySelector('#city-display')
-
-                // console.log(cardTemp)
-                // console.log(temperature)
-                // cardImg.src = weatherIcon;
-                // cardTemp.textContent = temperature + "°F";
-                // cardText.textContent = forecast;
-            // }
         }
+
+        weather.push(location_facts);
+        localStorage.setItem('weather', JSON.stringify(weather));
+
+
         //City Summary -- Center Column (MOMENT.JS / WIKIPEDIA API)
-        // $('.list-group-item').empty();
+        let today = list[0].dt_txt;
+        today = today.substring(0, today.length - 8);
 
-        var today = moment().format("dddd, MMMM Do YYYY hh:mm:ss");
-        var hour = parseInt(moment().format('HH'))
-        
-        console.log(hour)
-        if(hour > 11.5){
-            x = "PM"
-        } else {
-            x = "AM"
+        cityHeader.innerHTML = '<i class="fas fa-arrow-left"></i>    City:   ' + cityName + ',    ' + today + '    ' + '<i class="fas fa-arrow-right"></i>' 
+        console.log(cityHeader.innerHTML)
+        console.log('<i class="fas fa-arrow-left"></i>    City:   ' + cityName + ',    ' + today + '    ' + '<i class="fas fa-arrow-right"></i>')
+        console.log(cityHeader.innerHTML === '<i class="fas fa-arrow-left"></i>    City:   ' + cityName + ',    ' + today + '    ' + '<i class="fas fa-arrow-right"></i>')
+        if (cityHeader.innerHTML === '<i class="fas fa-arrow-left"></i>    City:   ' + cityName + ',    ' + today + '    ' + '<i class="fas fa-arrow-right"></i>'){
+            cityHeader.classList.remove('fa-arrow-left')
+            
         }
-        console.log(x)
-        cityHeader.textContent = "City:   " + cityName + ",    " + today + "    "  + x
+        $('#population').text('Population:   ' + population)
         $('#humidity').text('Humidity:  ' + humidity + '%')
         $('#sealevel').text('Feet Above Sealevel:  ' + sealevel)
         $('#windspeed').text('Windspeed (MPH):  ' + windspeed)
-        $()
+        $('#coordinates').text('Coordinates:   ' + lat + ",   " + lon)
 
-
-        // 
 
         //Create a new object to interact with the server
         var xhr = new XMLHttpRequest();
@@ -114,33 +141,12 @@ $('#btn-submit').on('click', function() {
 
             // Log the data object
             console.log(data);
-
-        //     // Log the page objects
-        //     console.log(data.query.pages)
-
-        //     // Loop through the data object
-        //     // Pulling out the titles of each page
-        //     for (var i in data.query.pages) {
-        //         console.log(data.query.pages[i].title);
             }
     // }
         // Send request to the server asynchronously
         xhr.send();
 
 
-
-        // $.ajax({
-        //     type: "GET",
-        //     url: Wikiurl,
-        //     data:{action:'openseach', format:'json',search: cityName},
-        //     dataType:'jsonp',
-        //     success: function (data){
-        //         data.setHeader("Set-Cookie", "HttpOnly;Secure; SameSite=Strict");
-        //         var arr=data;
-        //         console.log(arr)
-
-        //     }
-        // })
 
         //City Gif -- Right Column (GIPHY API)
             
@@ -202,33 +208,107 @@ $('#btn-submit').on('click', function() {
 
 
         //City Add -- Left Column
-        var lOne = $("<li id=" + cityName + ")>").text(cityName);
+        var lOne = $("<button value=" + cityName + "id=" + cityName + ">").text(cityName);
         $("#city-add-history").prepend(lOne);
+            
+        
+        
+        //Stores Items
 
-        const citySave = [];
+        
+    
 
-        let individualCity = {
-            city: $("<li id=" + cityName + ">").attr('id')
-        }
-        citySave.push(individualCity)
-        localStorage.setItem('city', JSON.stringify(citySave));
-    })
+
+
+
+
 
     document.querySelector('#myInput').value = "";
 })
+})
 
 
-$( "#city-add-history").click(function() {
-      $('#myInput').val( $(this).text().trim());
 
+
+var arr = JSON.parse(localStorage.getItem('weather'));
+
+function loadHistory() {
+    if(arr !== null){
+        for (var j = 0; j < arr.length; j++){
+            if (arr[j] !== null){
+            var lOne = $("<button value=" + arr[j].Savedcity + "  id=" + [j] + "  " + ">").text(arr[j].Savedcity);
+            $("#city-add-history").prepend(lOne);
+            } 
+        }
     }
-)
+  };
 
-// $("#city-add-history").click(function(){
-//     var input = $(this).text();
-//     input = input.substr(0,(input.length  - 1 ));
-// })
+loadHistory()
 
+
+var selected_button = $('button').val()
+
+$('button').click(function() {
+    var selected_button = parseInt($(this).attr('id'));
+    if(arr !== null){
+        for (var k = selected_button; k < selected_button + 1; k++){
+            var index = arr[k]
+            console.log(index)
+            //CONDENSE IF POSSIBLE ==> VIA FOR LOOP
+            let DOW1 = index.Savedday_of_week1.substring(0, index.Savedday_of_week1.length - 8);
+            let DOW1Final = DOW1.substring(5)
+            document.querySelector('#card-0-day-of-week').textContent = DOW1Final
+            let DOW2 = index.Savedday_of_week2.substring(0, index.Savedday_of_week2.length - 8);
+            let DOW2Final = DOW2.substring(5)
+            document.querySelector('#card-8-day-of-week').textContent = DOW2Final
+            let DOW3 = index.Savedday_of_week3.substring(0, index.Savedday_of_week3.length - 8);
+            let DOW3Final = DOW3.substring(5)
+            document.querySelector('#card-16-day-of-week').textContent = DOW3Final
+            let DOW4 = index.Savedday_of_week4.substring(0, index.Savedday_of_week4.length - 8);
+            let DOW4Final = DOW4.substring(5)
+            document.querySelector('#card-24-day-of-week').textContent = DOW4Final
+            let DOW5 = index.Savedday_of_week5.substring(0, index.Savedday_of_week5.length - 8);
+            let DOW5Final = DOW5.substring(5)
+            document.querySelector('#card-32-day-of-week').textContent = DOW5Final
+            //
+            document.querySelector('#card-0-img').textContent = null
+            document.querySelector('#card-0-img').setAttribute('src', arr[k].Savedimg1);
+            document.querySelector('#card-0-img').textContent = null
+            document.querySelector('#card-8-img').setAttribute('src', arr[k].Savedimg2);
+            document.querySelector('#card-0-img').textContent = null
+            document.querySelector('#card-16-img').setAttribute('src', arr[k].Savedimg3);
+            document.querySelector('#card-0-img').textContent = null
+            document.querySelector('#card-24-img').setAttribute('src', arr[k].Savedimg4);
+            document.querySelector('#card-0-img').textContent = null
+            document.querySelector('#card-32-img').setAttribute('src', arr[k].Savedimg5);
+            //
+            document.querySelector('#card-0-temperature').textContent = arr[k].Savedtemp + '° F';
+            document.querySelector('#card-8-temperature').textContent = arr[k].Savedtemp + '° F';
+            document.querySelector('#card-16-temperature').textContent = arr[k].Savedtemp + '° F';
+            document.querySelector('#card-24-temperature').textContent = arr[k].Savedtemp + '° F';
+            document.querySelector('#card-32-temperature').textContent = arr[k].Savedtemp + '° F';
+            //
+            document.querySelector('#card-0-text').textContent = arr[k].Savedforecast;
+            document.querySelector('#card-8-text').textContent = arr[k].Savedforecast;
+            document.querySelector('#card-16-text').textContent = arr[k].Savedforecast;
+            document.querySelector('#card-24-text').textContent = arr[k].Savedforecast;
+            document.querySelector('#card-32-text').textContent = arr[k].Savedforecast;
+            //
+            document.querySelector('#city-display').textContent = arr[k].Savedcity + ";     "  + arr[k].SavedFinalToday
+            //
+            document.querySelector('#population').textContent = "Population:   " + arr[k].Savedpopulation;
+            document.querySelector('#sealevel').textContent = "Feet Above Sealevel:    " + arr[k].Savedsealevel;
+            document.querySelector('#humidity').textContent = "Humidity:    " + arr[k].Savedhumidity +"%";
+            document.querySelector('#windspeed').textContent = "Windspeed (MPH):   " + arr[k].Savedwindspeed;
+            document.querySelector('#coordinates').textContent = "Coordinates:    "  + arr[k].Savedlon + ",   " + arr[k].Savedlat;
+
+
+            
+
+                
+    }
+}
+})
 
 
 
