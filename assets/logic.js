@@ -23,10 +23,29 @@ $('.fa-window-close').on('click', function(){
 
 
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////// WEATHER API /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var arr = JSON.parse(localStorage.getItem('weather'));
+console.log(arr)
+
+function loadHistory() {
+    if(arr !== null){
+        for (var j = 0; j < arr.length; j++){
+            if (arr[j] !== null){
+            var lOne = $("<button value=" + arr[j].Savedcity + " id=" + j + ">").text(arr[j].Savedcity);
+            $("#city-add-history").prepend(lOne);
+            } 
+        }
+    }
+  };
+
+loadHistory()
+
+
+
+
 
 let weather = []
 
@@ -73,6 +92,10 @@ $('#btn-submit').on('click', function() {
             cardImg.setAttribute('src', weatherIcon);
             cardTemp.textContent = temperature + "°F";
             cardText.textContent = forecast;
+            //
+            
+            
+
             //
 
             location_facts = {
@@ -208,9 +231,18 @@ $('#btn-submit').on('click', function() {
 
 
         //City Add -- Left Column
-        var lOne = $("<button value=" + cityName + "id=" + cityName + ">").text(cityName);
-        $("#city-add-history").prepend(lOne);
+        // console.log()
+
+
+        if (arr === null){
+            var lOne = $("<button value=" + cityName + " id=" + 0 + ">").text(cityName);
+            $("#city-add-history").prepend(lOne);
             
+        } else {
+            var lOne = $("<button value=" + cityName + " id=" + arr.length + ">").text(cityName);
+            $("#city-add-history").prepend(lOne);
+            
+        }
         
         
         //Stores Items
@@ -230,28 +262,16 @@ $('#btn-submit').on('click', function() {
 
 
 
-var arr = JSON.parse(localStorage.getItem('weather'));
-
-function loadHistory() {
-    if(arr !== null){
-        for (var j = 0; j < arr.length; j++){
-            if (arr[j] !== null){
-            var lOne = $("<button value=" + arr[j].Savedcity + "  id=" + [j] + "  " + ">").text(arr[j].Savedcity);
-            $("#city-add-history").prepend(lOne);
-            } 
-        }
-    }
-  };
-
-loadHistory()
 
 
+  
 var selected_button = $('button').val()
 
 $('button').click(function() {
-    var selected_button = parseInt($(this).attr('id'));
+    var selected_button = $(this).attr('id');
+    console.log(selected_button)
     if(arr !== null){
-        for (var k = selected_button; k < selected_button + 1; k++){
+        for (var k = selected_button; k < selected_button; k++){
             var index = arr[k]
             console.log(index)
             //CONDENSE IF POSSIBLE ==> VIA FOR LOOP
