@@ -12,40 +12,27 @@ $('.fa-window-close').on('click', function(){
     $('.bg-modal').addClass('hide');
 })
 
-
-
-
-
-
-
-
-
-
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////// WEATHER API /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 var arr = JSON.parse(localStorage.getItem('weather'));
 console.log(arr)
+
+
 
 function loadHistory() {
     if(arr !== null){
         for (var j = 0; j < arr.length; j++){
             if (arr[j] !== null){
-            var lOne = $("<button value=" + arr[j].Savedcity + " id=" + j + ">").text(arr[j].Savedcity);
+            console.log(arr[j])
+            var lOne = $("<button value=" + arr[j].Savedcity + " id=" + j + " onclick='myFunction()'>").text(arr[j].Savedcity);
             $("#city-add-history").prepend(lOne);
             } 
         }
     }
   };
-
-loadHistory()
-
-
-
-
 
 let weather = []
 
@@ -60,7 +47,6 @@ $('#btn-submit').on('click', function() {
     }).then(function(response){
         //Weather Dashboard
         var list = response.list
-        console.log(list)
         let location_facts = {};
         for (var i = 0; i < list.length; i += 8) {
             var forecast = list[i].weather[0].main
@@ -77,17 +63,12 @@ $('#btn-submit').on('click', function() {
             day_of_week = day_of_week.substring(0, day_of_week.length - 8);
             day_of_week = day_of_week.substring(5)
             var DOW = day_of_week
-            console.log(DOW)
             //
-            console.log(list.length)
-            console.log(i)
             var cardDOW = document.querySelector('#card-'+ i +'-day-of-week')
             var cardImg = document.querySelector('#card-'+ i +'-img')
             var cardText = document.querySelector('#card-'+ i +'-text')
             var cardTemp = document.querySelector('#card-'+ i +'-temperature')
             var cityHeader = document.querySelector('#city-display')
-            console.log(cardTemp)
-            console.log(temperature)
             cardDOW.textContent = DOW
             cardImg.setAttribute('src', weatherIcon);
             cardTemp.textContent = temperature + "°F";
@@ -135,9 +116,6 @@ $('#btn-submit').on('click', function() {
         today = today.substring(0, today.length - 8);
 
         cityHeader.innerHTML = '<i class="fas fa-arrow-left"></i>    City:   ' + cityName + ',    ' + today + '    ' + '<i class="fas fa-arrow-right"></i>' 
-        console.log(cityHeader.innerHTML)
-        console.log('<i class="fas fa-arrow-left"></i>    City:   ' + cityName + ',    ' + today + '    ' + '<i class="fas fa-arrow-right"></i>')
-        console.log(cityHeader.innerHTML === '<i class="fas fa-arrow-left"></i>    City:   ' + cityName + ',    ' + today + '    ' + '<i class="fas fa-arrow-right"></i>')
         if (cityHeader.innerHTML === '<i class="fas fa-arrow-left"></i>    City:   ' + cityName + ',    ' + today + '    ' + '<i class="fas fa-arrow-right"></i>'){
             cityHeader.classList.remove('fa-arrow-left')
             
@@ -150,24 +128,24 @@ $('#btn-submit').on('click', function() {
 
 
         //Create a new object to interact with the server
-        var xhr = new XMLHttpRequest();
+    //     var xhr = new XMLHttpRequest();
 
-        var Wikiurl = "https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&generator=search&gsrnamespace=0&gsrlimit=5&gsrsearch=" + cityName;
+    //     var Wikiurl = "https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&generator=search&gsrnamespace=0&gsrlimit=5&gsrsearch=" + cityName;
 
-        // Provide 3 arguments (GET/POST, The URL, Async True/False)
-        xhr.open('GET', Wikiurl, true);
+    //     // Provide 3 arguments (GET/POST, The URL, Async True/False)
+    //     xhr.open('GET', Wikiurl, true);
 
-        // Once request has loaded...
-        xhr.onload = function() {
-            // Parse the request into JSON
-            var data = JSON.parse(this.response);
+    //     // Once request has loaded...
+    //     xhr.onload = function() {
+    //         // Parse the request into JSON
+    //         var data = JSON.parse(this.response);
 
-            // Log the data object
-            console.log(data);
-            }
-    // }
-        // Send request to the server asynchronously
-        xhr.send();
+    //         // Log the data object
+    //         console.log(data);
+    //         }
+    // // }
+    //     // Send request to the server asynchronously
+    //     xhr.send();
 
 
 
@@ -182,9 +160,6 @@ $('#btn-submit').on('click', function() {
                 })
                 .then(function(response) {
                      var random = Math.floor(Math.random() * 10)
-                     console.log(response.results[random].user.first_name);
-                     console.log(response.results[random].urls);
-                     console.log(response.results[random].urls.raw);
                      var authorFirstName = response.results[random].user.first_name
                      var authorLastName = response.results[random].user.last_name
                      var returnedImg = response.results[random].urls.regular;
@@ -197,12 +172,9 @@ $('#btn-submit').on('click', function() {
                      cityImg.attr('src', returnedImg);
                      cityImg.attr('alt', returnedCitation);
                      cityImg.addClass('auto-fit');
-                     console.log(response.results[random].height < 6000);
                      //For small pictures, two are returned to fill empty space; for large pictures, it autofills for only need use of one picture.
                      //If author does not have last name presented, then only first name is shown.
                      if (response.results[random].height < 6000){
-                         console.log(response.results[random].user)
-                         console.log(authorLastName == null)
                          if(authorLastName == null){
                             $('#city-picture-header').html(citation).text('Photo(s) by:   ' + authorFirstName);
                             $('.auto-fit').html(cityDescription)
@@ -233,16 +205,44 @@ $('#btn-submit').on('click', function() {
         //City Add -- Left Column
         // console.log()
 
+                // console.log(arr)
+                
+                // var item = JSON.parse(localStorage.getItem('weather'));
+                // var itemLength = item.length
 
-        if (arr === null){
-            var lOne = $("<button value=" + cityName + " id=" + 0 + ">").text(cityName);
-            $("#city-add-history").prepend(lOne);
+
+                //     if (itemLength !== null){
+                //         var lOne = $("<button value=" + cityName + " id=" + 0 + ">").text(cityName);
+                //         $("#city-add-history").prepend(lOne);}
+                //     else {
+                //         var p = 0;
+                //         p ++;
+                //         var lOne = $("<button value=" + cityName + " id=" + itemLength + ">").text(cityName);
+                //         $("#city-add-history").prepend(lOne);
+                //     }
+
+
+                // var arr = JSON.parse(localStorage.getItem('weather'));
+                // console.log(arr)
+                // console.log(arr.length)
+
+                var buttonsDisplayed = document.querySelectorAll('button') 
+                var buttonsLength = buttonsDisplayed.length
+                console.log(buttonsLength - 1)
+
+                if(buttonsDisplayed !== null){
+                    for (var j = buttonsLength - 1; j < buttonsLength; j++){
+                        if (buttonsDisplayed[j] !== null){
+                        var lOne = $("<button value=" + cityName + " id=" + j + " onclick='myFunction()'>").text(cityName);
+                        $("#city-add-history").prepend(lOne);
+                        } 
+                    }
+                }
+              });
             
-        } else {
-            var lOne = $("<button value=" + cityName + " id=" + arr.length + ">").text(cityName);
-            $("#city-add-history").prepend(lOne);
-            
-        }
+
+
+                
         
         
         //Stores Items
@@ -257,80 +257,106 @@ $('#btn-submit').on('click', function() {
 
     document.querySelector('#myInput').value = "";
 })
-})
 
+
+// var arr = JSON.parse(localStorage.getItem('weather'));
+// console.log(arr)
+
+// function loadHistory() {
+//     if(arr !== null){
+//         var celieng = (arr.length + arr.length) - 1
+//         for (var j = 0; j < celieng; j++){
+//             if (arr[j] !== null){
+//             var lOne = $("<button value=" + arr[j].Savedcity + " id=" + j + ">").text(arr[j].Savedcity);
+//             $("#city-add-history").prepend(lOne);
+//             } 
+//         }
+//     }
+//   };
+
+// loadHistory()
 
 
 
 
 
   
-var selected_button = $('button').val()
+// var selected_button = $('button').val()
 
-$('button').click(function() {
-    var selected_button = $(this).attr('id');
+
+function myFunction() {
+    var selected_button = $(this).attr('class')
     console.log(selected_button)
-    if(arr !== null){
-        for (var k = selected_button; k < selected_button; k++){
-            var index = arr[k]
-            console.log(index)
-            //CONDENSE IF POSSIBLE ==> VIA FOR LOOP
-            let DOW1 = index.Savedday_of_week1.substring(0, index.Savedday_of_week1.length - 8);
-            let DOW1Final = DOW1.substring(5)
-            document.querySelector('#card-0-day-of-week').textContent = DOW1Final
-            let DOW2 = index.Savedday_of_week2.substring(0, index.Savedday_of_week2.length - 8);
-            let DOW2Final = DOW2.substring(5)
-            document.querySelector('#card-8-day-of-week').textContent = DOW2Final
-            let DOW3 = index.Savedday_of_week3.substring(0, index.Savedday_of_week3.length - 8);
-            let DOW3Final = DOW3.substring(5)
-            document.querySelector('#card-16-day-of-week').textContent = DOW3Final
-            let DOW4 = index.Savedday_of_week4.substring(0, index.Savedday_of_week4.length - 8);
-            let DOW4Final = DOW4.substring(5)
-            document.querySelector('#card-24-day-of-week').textContent = DOW4Final
-            let DOW5 = index.Savedday_of_week5.substring(0, index.Savedday_of_week5.length - 8);
-            let DOW5Final = DOW5.substring(5)
-            document.querySelector('#card-32-day-of-week').textContent = DOW5Final
-            //
-            document.querySelector('#card-0-img').textContent = null
-            document.querySelector('#card-0-img').setAttribute('src', arr[k].Savedimg1);
-            document.querySelector('#card-0-img').textContent = null
-            document.querySelector('#card-8-img').setAttribute('src', arr[k].Savedimg2);
-            document.querySelector('#card-0-img').textContent = null
-            document.querySelector('#card-16-img').setAttribute('src', arr[k].Savedimg3);
-            document.querySelector('#card-0-img').textContent = null
-            document.querySelector('#card-24-img').setAttribute('src', arr[k].Savedimg4);
-            document.querySelector('#card-0-img').textContent = null
-            document.querySelector('#card-32-img').setAttribute('src', arr[k].Savedimg5);
-            //
-            document.querySelector('#card-0-temperature').textContent = arr[k].Savedtemp + '° F';
-            document.querySelector('#card-8-temperature').textContent = arr[k].Savedtemp + '° F';
-            document.querySelector('#card-16-temperature').textContent = arr[k].Savedtemp + '° F';
-            document.querySelector('#card-24-temperature').textContent = arr[k].Savedtemp + '° F';
-            document.querySelector('#card-32-temperature').textContent = arr[k].Savedtemp + '° F';
-            //
-            document.querySelector('#card-0-text').textContent = arr[k].Savedforecast;
-            document.querySelector('#card-8-text').textContent = arr[k].Savedforecast;
-            document.querySelector('#card-16-text').textContent = arr[k].Savedforecast;
-            document.querySelector('#card-24-text').textContent = arr[k].Savedforecast;
-            document.querySelector('#card-32-text').textContent = arr[k].Savedforecast;
-            //
-            document.querySelector('#city-display').textContent = arr[k].Savedcity + ";     "  + arr[k].SavedFinalToday
-            //
-            document.querySelector('#population').textContent = "Population:   " + arr[k].Savedpopulation;
-            document.querySelector('#sealevel').textContent = "Feet Above Sealevel:    " + arr[k].Savedsealevel;
-            document.querySelector('#humidity').textContent = "Humidity:    " + arr[k].Savedhumidity +"%";
-            document.querySelector('#windspeed').textContent = "Windspeed (MPH):   " + arr[k].Savedwindspeed;
-            document.querySelector('#coordinates').textContent = "Coordinates:    "  + arr[k].Savedlon + ",   " + arr[k].Savedlat;
+
+}
+
+
+// $('button').click(function() {
+//     var selected_button = $(this).children(":selected").attr('id');
+//     // var selected_button = $(this).attr('id');
+//     console.log(selected_button)
+//     if(arr !== null){
+//         for (var k = selected_button; k < selected_button; k++){
+//             var index = arr[k]
+//             console.log(index)
+//             //CONDENSE IF POSSIBLE ==> VIA FOR LOOP
+//             let DOW1 = index.Savedday_of_week1.substring(0, index.Savedday_of_week1.length - 8);
+//             let DOW1Final = DOW1.substring(5)
+//             document.querySelector('#card-0-day-of-week').textContent = DOW1Final
+//             let DOW2 = index.Savedday_of_week2.substring(0, index.Savedday_of_week2.length - 8);
+//             let DOW2Final = DOW2.substring(5)
+//             document.querySelector('#card-8-day-of-week').textContent = DOW2Final
+//             let DOW3 = index.Savedday_of_week3.substring(0, index.Savedday_of_week3.length - 8);
+//             let DOW3Final = DOW3.substring(5)
+//             document.querySelector('#card-16-day-of-week').textContent = DOW3Final
+//             let DOW4 = index.Savedday_of_week4.substring(0, index.Savedday_of_week4.length - 8);
+//             let DOW4Final = DOW4.substring(5)
+//             document.querySelector('#card-24-day-of-week').textContent = DOW4Final
+//             let DOW5 = index.Savedday_of_week5.substring(0, index.Savedday_of_week5.length - 8);
+//             let DOW5Final = DOW5.substring(5)
+//             document.querySelector('#card-32-day-of-week').textContent = DOW5Final
+//             //
+//             document.querySelector('#card-0-img').textContent = null
+//             document.querySelector('#card-0-img').setAttribute('src', arr[k].Savedimg1);
+//             document.querySelector('#card-0-img').textContent = null
+//             document.querySelector('#card-8-img').setAttribute('src', arr[k].Savedimg2);
+//             document.querySelector('#card-0-img').textContent = null
+//             document.querySelector('#card-16-img').setAttribute('src', arr[k].Savedimg3);
+//             document.querySelector('#card-0-img').textContent = null
+//             document.querySelector('#card-24-img').setAttribute('src', arr[k].Savedimg4);
+//             document.querySelector('#card-0-img').textContent = null
+//             document.querySelector('#card-32-img').setAttribute('src', arr[k].Savedimg5);
+//             //
+//             document.querySelector('#card-0-temperature').textContent = arr[k].Savedtemp + '° F';
+//             document.querySelector('#card-8-temperature').textContent = arr[k].Savedtemp + '° F';
+//             document.querySelector('#card-16-temperature').textContent = arr[k].Savedtemp + '° F';
+//             document.querySelector('#card-24-temperature').textContent = arr[k].Savedtemp + '° F';
+//             document.querySelector('#card-32-temperature').textContent = arr[k].Savedtemp + '° F';
+//             //
+//             document.querySelector('#card-0-text').textContent = arr[k].Savedforecast;
+//             document.querySelector('#card-8-text').textContent = arr[k].Savedforecast;
+//             document.querySelector('#card-16-text').textContent = arr[k].Savedforecast;
+//             document.querySelector('#card-24-text').textContent = arr[k].Savedforecast;
+//             document.querySelector('#card-32-text').textContent = arr[k].Savedforecast;
+//             //
+//             document.querySelector('#city-display').textContent = arr[k].Savedcity + ";     "  + arr[k].SavedFinalToday
+//             //
+//             document.querySelector('#population').textContent = "Population:   " + arr[k].Savedpopulation;
+//             document.querySelector('#sealevel').textContent = "Feet Above Sealevel:    " + arr[k].Savedsealevel;
+//             document.querySelector('#humidity').textContent = "Humidity:    " + arr[k].Savedhumidity +"%";
+//             document.querySelector('#windspeed').textContent = "Windspeed (MPH):   " + arr[k].Savedwindspeed;
+//             document.querySelector('#coordinates').textContent = "Coordinates:    "  + arr[k].Savedlon + ",   " + arr[k].Savedlat;
 
 
             
 
                 
-    }
-}
-})
+//     }
+// }
+// }
+// )
 
-
+// $(document).on('click', "#city-add-history", cityRender());
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
