@@ -25,6 +25,16 @@
     z-index: -1;
 }
 
+.card-text{
+    margin-top: 45.5px;
+    font-size: 30px;
+}
+
+.revert {
+    margin-top: 0px !important;
+    font-size: 14px !important;
+}
+
 /* INTERFACE */
 #backgroundimage{
     width: 100% !important;
@@ -173,7 +183,9 @@ h2, .h2 {
     opacity: 50%;
 }
 
-
+.buttonHistory {
+    z-index: 1 !important;
+}
 
 ul {
     list-style-type: none;
