@@ -1,3 +1,4 @@
+//Main Screen -- Default Layout before User Interaction
 var today = moment().format('dddd');
 var todaynum = moment().format('LL');
 
@@ -27,21 +28,17 @@ var dayafterx3num = moment().add(4,'day').format('LL');
 
 $('#card-32-day-of-week').text(dayafterx3)
 $('#card-32-temperature').text(dayafterx3num)
-
-
-
-
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////// POPUP MODAL ICON /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//On click, remove the hide class (display: none) and addClass of show (display: inline-block)
 $('.display-4').on('click', function(){
     $('.bg-modal').removeClass('hide');
     $('.bg-modal').addClass('show');
 })
 
+//On click, window closes by reversing means
 $('.fa-window-close').on('click', function(){
     $('.bg-modal').removeClass('show');
     $('.bg-modal').addClass('hide');
@@ -51,14 +48,18 @@ $('.fa-window-close').on('click', function(){
 ////////////////////////////////////////////// WEATHER API /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+// Global variable of storing city & photos from API connections
 var arr = JSON.parse(localStorage.getItem('weather'));
 var parr = JSON.parse(localStorage.getItem('photo'));
 
+
+//Global Arrays to be pushed when user runs API's
 let weather = []
+let photo = []
 
-
+//Loads/Recalls buttons from stored look up values.
 function loadHistory() {
+    //So long as there is a value within the array, loop through the array and paste values with text of the searched value
     if(arr !== null){
         for (var j = 0; j < arr.length; j++){
             if (arr[j] !== null){
@@ -69,23 +70,23 @@ function loadHistory() {
     }
   };
 
+//On button click of the submit button, prevent event default, run api based off searched cities values, and paste response in coordinating locations
 $('#btn-submit').on('click', function() {
     event.preventDefault()
     $('p').addClass('revert');
-    // console.log(card)
     var apiKey = '79bb7dc0e8f07f6ebe01166410e6e392'
+    //Variable of cityName is amended by replacing any possible spaces by hyphens to be API look up friendly.
     var cityName = document.querySelector('#myInput').value
     cityName = cityName.replace(/\s+/g,"-");
-    console.log(cityName)
+    //AJAX is ran with coordinating values placed
     var queryURL = 'http://api.openweathermap.org/data/2.5/forecast?q=' + cityName + '&APPID=' + apiKey
     $.ajax({
         url: queryURL,
         method: "GET"
     }).then(function(response){
-        console.log(response)
-        //Weather Dashboard
-        var list = response.list
-        // let location_facts = {};
+            //Setting response as variable list to condense code needed to return value
+            var list = response.list
+        // since 5-day forecast returns in 3 hour increments over a 5 day period (40 responses) it loops in intervals of 8 to get oner esponse for each day
         for (var i = 0; i < list.length; i += 8) {
             var forecast = list[i].weather[0].main
             var kelvin = list[i].main.temp;
@@ -102,10 +103,13 @@ $('#btn-submit').on('click', function() {
             var lon = response.city.coord.lon
             var lat = response.city.coord.lat
             let day_of_week = list[i].dt_txt;
+            //Uses returned value for the day of the week and trims so only the true day is displayed, and not the year, month, or exact time is displayed
             day_of_week = day_of_week.substring(0, day_of_week.length - 8);
             day_of_week = day_of_week.substring(5)
             var DOW = day_of_week
-            //
+
+
+            //Imports all responses into coordinated position within HTML
             var cardDOW = document.querySelector('#card-'+ i +'-day-of-week')
             var cardImg = document.querySelector('#card-'+ i +'-img')
             var cardText = document.querySelector('#card-'+ i +'-text')
@@ -115,15 +119,15 @@ $('#btn-submit').on('click', function() {
             cardImg.setAttribute('src', weatherIcon);
             cardTemp.textContent = temperature + "°F";
             cardText.textContent = forecast;
-            //
 
         }
 
-
+        //Saves & pushes the cityName variable into the array to store in local storage to repopulate screen upon refreshing/opening of the file
         location_facts = {
             Savedcity: cityName,    
         }    
         weather.push(location_facts);
+        //Calls and saves the global variable of weather into local storage, by first saving the object and then turning into string.
         localStorage.setItem('weather', JSON.stringify(weather));
 
     
@@ -143,87 +147,89 @@ $('#btn-submit').on('click', function() {
         $('#windspeed').text('Windspeed (MPH):  ' + windspeed)
         $('#coordinates').text('Coordinates:   ' + lat + ",   " + lon)
             
-            var pic_api_key = 'l_ucLpuaVqeosGc7xD0pKg6Ib61kn737l_M3-nkFmZY'
-            
-            var Picurl = 'https://api.unsplash.com/search/photos?client_id=' + pic_api_key + '&query=' + cityName;
-            $.ajax({
-                    url: Picurl,
-                    method: "GET"
-                })
-                .then(function(response) {
-                     var random = Math.floor(Math.random() * 10)
-                     var authorFirstName = response.results[random].user.first_name
-                     var authorLastName = response.results[random].user.last_name
-                     var returnedImg = response.results[random].urls.regular;
-                     var returnedCitation = response.results[random].links.download;
-                     var returnedDescription = response.results[random].alt_description;
-                    //  var cityImg = $('<img>');
-                     var citation = $('<a>')
-                     var cityDescription = $('<p>').text(returnedDescription);
-                     citation.attr('href', returnedCitation)
-                     $('#locationGif').attr('src', returnedImg);
-                     $('#locationGif').attr('alt', returnedCitation);
-                     $('#locationGif').addClass('auto-fit');
-                     //For small pictures, two are returned to fill empty space; for large pictures, it autofills for only need use of one picture.
-                     //If author does not have last name presented, then only first name is shown.
-                     if (response.results[random].height < 6000){
-                         if(authorLastName === null){
-                            $('#city-picture-header').html(citation).text('Photo(s) by:   ' + authorFirstName);
-                            $('.auto-fit').html(cityDescription)
-                            $('#locationGif').html(cityImg)
-                            $('#locationGif').html($('<img>').addClass('auto-fit').attr('src',response.results[random - 1].urls.regular))
-                         } else{
-                            $('#city-picture-header').html(citation).text('Photo(s) by:   ' + authorFirstName + '    ' + authorLastName);
-                            $('.auto-fit').html(cityDescription)
-                            $('#locationGif').html(cityImg)
-                            $('#locationGif').html($('<img>').addClass('auto-fit').attr('src',response.results[random - 1].urls.regular))
-                         }
-                     } else{
-                         if(authorLastName === null){
-                            $('#city-picture-header').html(citation).text('Photo(s) by:   ' + authorFirstName);
-                            $('.auto-fit').html(cityDescription)
-                            $('#locationGif').html(cityImg)
-                         } else {
-                            $('#city-picture-header').html(citation).text('Photo(s) by:   ' + authorFirstName + '    ' + authorLastName);
-                            $('.auto-fit').html(cityDescription)
-                            $('#locationGif').html(cityImg)
-                         }
 
-                     }
 
-                     photo_details = {
-                         SavedAFN: authorFirstName,
-                         SavedALN: authorLastName,
-                         SavedImg: returnedImg,
-                         SavedCitation: returnedCitation,
-                         SavedDescription: returnedDescription
-                     }
-
-                     photo.push(photo_details);
-                     localStorage.setItem('photo', JSON.stringify(photo));
-                })
-        //City Add -- Left Column
-                var buttonsDisplayed = document.querySelectorAll('button') 
-                var buttonsLength = buttonsDisplayed.length
-                if(buttonsDisplayed !== null){
-                    for (var j = buttonsLength - 1; j < buttonsLength; j++){
-                        if (buttonsDisplayed[j] !== null){
-                        var lOne = $("<button class='card-body buttonHistory' value=" + cityName + " id=" + j + ">").text(cityName);
-                        $("#city-add-history").prepend(lOne);
-                        } 
+    //Second API ran upon click of submission button to call photos of the city for display; along with the authors name and the source of the image as well
+    var pic_api_key = 'l_ucLpuaVqeosGc7xD0pKg6Ib61kn737l_M3-nkFmZY'
+    
+    var Picurl = 'https://api.unsplash.com/search/photos?client_id=' + pic_api_key + '&query=' + cityName;
+    $.ajax({
+            url: Picurl,
+            method: "GET"
+        })
+        .then(function(response) {
+                var random = Math.floor(Math.random() * 10)
+                var authorFirstName = response.results[random].user.first_name
+                var authorLastName = response.results[random].user.last_name
+                var returnedImg = response.results[random].urls.regular;
+                var returnedCitation = response.results[random].links.download;
+                var returnedDescription = response.results[random].alt_description;
+                var citation = $('<a>')
+                var cityDescription = $('<p>').text(returnedDescription);
+                citation.attr('href', returnedCitation)
+                $('#locationGif').attr('src', returnedImg);
+                $('#locationGif').attr('alt', returnedCitation);
+                $('#locationGif').addClass('auto-fit');
+                //For smaller pictures ( < 6000), two are returned to fill empty space; for large pictures, it autofills for only need use of one picture.
+                //If author does not have last name presented, then only first name is shown.
+                if (response.results[random].height < 6000){
+                    if(authorLastName === null){
+                    $('#city-picture-header').html(citation).text('Photo(s) by:   ' + authorFirstName);
+                    $('.auto-fit').html(cityDescription)
+                    $('#locationGif').html(cityImg)
+                    $('#locationGif').html($('<img>').addClass('auto-fit').attr('src',response.results[random - 1].urls.regular))
+                    } else{
+                    $('#city-picture-header').html(citation).text('Photo(s) by:   ' + authorFirstName + '    ' + authorLastName);
+                    $('.auto-fit').html(cityDescription)
+                    $('#locationGif').html(cityImg)
+                    $('#locationGif').html($('<img>').addClass('auto-fit').attr('src',response.results[random - 1].urls.regular))
                     }
+                } else{
+                    if(authorLastName === null){
+                    $('#city-picture-header').html(citation).text('Photo(s) by:   ' + authorFirstName);
+                    $('.auto-fit').html(cityDescription)
+                    $('#locationGif').html(cityImg)
+                    } else {
+                    $('#city-picture-header').html(citation).text('Photo(s) by:   ' + authorFirstName + '    ' + authorLastName);
+                    $('.auto-fit').html(cityDescription)
+                    $('#locationGif').html(cityImg)
+                    }
+
+                }
+                //Pushes and saved photo details to local storage as well for recalling upon refreshing of page.
+                photo_details = {
+                    SavedAFN: authorFirstName,
+                    SavedALN: authorLastName,
+                    SavedImg: returnedImg,
+                    SavedCitation: returnedCitation,
+                    SavedDescription: returnedDescription
                 }
 
+                photo.push(photo_details);
+                localStorage.setItem('photo', JSON.stringify(photo));
+        })
+        //City Add -- Left Column
+        var buttonsDisplayed = document.querySelectorAll('button') 
+        var buttonsLength = buttonsDisplayed.length
+        if(buttonsDisplayed !== null){
+            for (var j = buttonsLength - 1; j < buttonsLength; j++){
+                if (buttonsDisplayed[j] !== null){
+                var lOne = $("<button class='card-body buttonHistory' value=" + cityName + " id=" + j + ">").text(cityName);
+                $("#city-add-history").prepend(lOne);
+                } 
+            }
+        }
 
-                document.querySelector('#myInput').value = "";
+        //Reverts the search bar to blank upon submission for friendlier UI experience
+        document.querySelector('#myInput').value = "";
 
-              })}
-              
-            );
+        })}
+        
+        );
                 
 
 
-
+//When clicking on the buttons to recall any city, the entire process of calling the API is repeated to simplify the reproduction process
 $(document).on('click', '.buttonHistory', function(){
     $('p').addClass('revert');
     event.preventDefault()
@@ -330,15 +336,4 @@ $(document).on('click', '.buttonHistory', function(){
                 })
             })
         });
-
-
- 
-        
-
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////// CITY ADD ////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
