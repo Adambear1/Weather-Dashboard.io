@@ -1,5 +1,7 @@
 # Weather-Dashboard.io
 
+## LINK TO DEPLOYED VERSION --> https://adambear1.github.io/Weather-Dashboard.io/
+
 
 
 ![Alt Text](weathergif.gif)
@@ -27,8 +29,9 @@
 * CSS
 * JavaScript
 
-## Usage
+## Total Usage
 * Identify any city in the world via autocomplete database system to configure the forecast for the following week.
 * Ability to utilize local storage to recall past searches.
 * Photo generations are completely random and able to link to authors personal website/blog (if applied)
 * Utilization of popup modal for additonal information
+
